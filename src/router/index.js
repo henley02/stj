@@ -16,6 +16,20 @@ export default new Router({
       component: function (resolve) {
         require(['./../pages/goods/goods.vue'], resolve);
       }
+    },
+    {
+      path: '/ratings',
+      name: 'Ratings',
+      component: function (resolve) {
+        require(['./../pages/ratings/ratings.vue'], resolve);
+      }
+    },
+    {
+      path: '/seller',
+      name: 'Seller',
+      component: function (resolve) {
+        require(['./../pages/seller/seller.vue'], resolve);
+      }
     }
   ]
 });
