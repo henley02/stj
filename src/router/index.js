@@ -5,10 +5,17 @@ Vue.use(Router);
 
 export default new Router({
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'HelloWorld',
-    //   component: HelloWorld
-    // }
+    {
+      path: '/',
+      name: 'Index',
+      redirect: 'goods'
+    },
+    {
+      path: '/goods',
+      name: 'Goods',
+      component: function (resolve) {
+        require(['./../pages/goods/goods.vue'], resolve);
+      }
+    }
   ]
 });
