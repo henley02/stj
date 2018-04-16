@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-header></v-header>
+    <v-header :seller="seller"></v-header>
     <div class="tab">
       <div class="tab-item border-1px" v-for="(item,index) in tabList" :key="index">
         <router-link tag="a" :to="{path:`${item.path}`}" active-class="active">{{item.name}}</router-link>
@@ -20,12 +20,11 @@
     },
     data() {
       return {
-        tabList:
-          [
-            {path: '/goods', name: '商品'},
-            {path: '/ratings', name: '评论'},
-            {path: '/seller', name: '商家'}
-          ],
+        tabList: [
+          {path: '/goods', name: '商品'},
+          {path: '/ratings', name: '评论'},
+          {path: '/seller', name: '商家'}
+        ],
         seller: {}
       };
     },
