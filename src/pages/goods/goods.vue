@@ -2,14 +2,16 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="item in goods" class="menu-item">
-          <span class="text border-1px"><span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}</span>
+        <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex==index}"
+            @click="selectMenu(index)">
+          <span class="text border-1px"><span v-show="item.type>0" class="icon"
+                                              :class="classMap[item.type]"></span>{{item.name}}</span>
         </li>
       </ul>
     </div>
     <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list foot-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -20,12 +22,11 @@
                 <h2 class="name">{{food.name}}</h2>
                 <p class="desc">{{food.description}}</p>
                 <div class="extra">
-                  <span class="count">月售{{food.sellCount}}份</span>
-                  <span>好评率{{food.rating}}%</span>
+                  <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
                 </div>
                 <div class="price">
-                  <span class="now">¥{{food.price}}</span>
-                  <span v-show="food.oldPrice" class="old">¥{{food.oldPrice}}</span>
+                  <span class="now">¥{{food.price}}</span><span v-show="food.oldPrice"
+                                                                class="old">¥{{food.oldPrice}}</span>
                 </div>
               </div>
             </li>
@@ -33,50 +34,99 @@
         </li>
       </ul>
     </div>
+    <shop-cart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
   </div>
 </template>
 <script type="text/ecmascript-6">
+  import shopCart from './../../components/shopCart/shopCart.vue';
   import BScroll from 'better-scroll';
 
   export default {
     name: 'goods',
+    components: {
+      shopCart
+    },
     props: {
       seller: {type: Object}
     },
-    data () {
+    data() {
       return {
         goods: [],
-        classMap: ['decrease', 'discount', 'guarantee', 'invoice', 'special']
+        classMap: ['decrease', 'discount', 'guarantee', 'invoice', 'special'],
+        listHeight: [],
+        scrollY: 0
       };
     },
+    computed: {
+      currentIndex() {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i];
+          let height2 = this.listHeight[i + 1];
+          if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+            return i;
+          }
+        }
+        return 0;
+      }
+    },
     methods: {
+      /**
+       * 点击左侧菜单
+       */
+      selectMenu(index) {
+        let footList = this.$refs.foodsWrapper.getElementsByClassName('foot-list-hook');
+        let el = footList[index];
+        this.foodScroll.scrollToElement(el, 300);
+      },
+      /**
+       * 计算高度
+       */
+      _calculateHeight() {
+        let footList = this.$refs.foodsWrapper.getElementsByClassName('foot-list-hook');
+        let height = 0;
+        this.listHeight.push(height);
+        for (let i = 0; i < footList.length; i++) {
+          let item = footList[i];
+          height += item.clientHeight;
+          this.listHeight.push(height);
+        }
+      },
+      /**
+       * 滚动
+       */
       _initScroll() {
-        this.menuScroll = new BScroll(this.$refs.menuWrapper, {});
-        this.foodScroll = new BScroll(this.$refs.foodsWrapper, {});
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+          click: true
+        });
+        this.foodScroll = new BScroll(this.$refs.foodsWrapper, {
+          probeType: 3
+        });
+        this.foodScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y));
+        });
       },
       async init() {
         let res = await this.$http.get('/api/goods').then((response) => response.body);
         if (res.errno === 0) {
           this.goods = res.data;
-          this._initScroll();
-          console.log(this.goods);
+          this.$nextTick(() => {
+            this._initScroll();
+            this._calculateHeight();
+          });
         }
       }
     },
-    created () {
+    created() {
       this.init();
-    },
-    mounted () {
     }
   };
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixin"
-
   .goods
     display: flex
     position: absolute
-    top: 174px
+    top: 170px
     bottom: 46px
     width: 100%
     overflow: hidden
@@ -90,6 +140,14 @@
         width: 56px
         padding: 0 12px
         line-height: 14px
+        &.current
+          position: relative
+          z-index: 10
+          margin-top: -1px
+          background: #fff
+          font-weight: 700
+          .text
+            border-none()
         .icon
           display: inline-block
           width: 16px
@@ -148,9 +206,10 @@
             font-size: 10px
             color: rgb(147, 153, 159)
           .desc
+            line-height: 12px
             margin-bottom: 8px
           .extra
-            &.count
+            .count
               margin-right: 12px
           .price
             font-weight: 700
