@@ -22,7 +22,7 @@
         <i class="icon-keyboard_arrow_right"></i>
       </div>
     </div>
-    <div class="bulletin-wrapper">
+    <div class="bulletin-wrapper" @click="toggleShow()">
       <span class="bulletin-title"></span><span class="bulletin-text">{{seller.bulletin}}</span>
       <i class="icon-keyboard_arrow_right"></i>
     </div>
@@ -63,7 +63,6 @@
         </div>
       </div>
     </transition>
-
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -87,10 +86,6 @@
       toggleShow() {
         this.detailShow = !this.detailShow;
       }
-    },
-    created() {
-    },
-    mounted() {
     }
   };
 </script>
@@ -104,7 +99,7 @@
     background: rgba(7, 17, 27, 0.5)
     .content-wrapper
       position: relative
-      padding: 20px 12px 18px 24px
+      padding: 24px 12px 18px 24px
       font-size: 0
       .avatar
         display: inline-block
@@ -114,9 +109,8 @@
       .content
         display: inline-block
         margin-left: 16px
-        font-size: 14px
         .title
-          margin: 2px 0px 8px 0
+          margin: 2px 0 8px 0
           .brand
             display: inline-block
             vertical-align: top
@@ -124,12 +118,13 @@
             height: 18px
             bg-image('images/brand')
             background-size: 30px 18px
-            background-repeat no-repeat
+            background-repeat: no-repeat
           .name
             margin-left: 6px
             font-size: 16px
-            line-height 18px
-            font-weight bold
+            line-height: 18px
+            font-weight: bold
+
         .description
           margin-bottom: 10px
           line-height: 12px
@@ -156,12 +151,13 @@
           .text
             line-height: 12px
             font-size: 10px
+
       .support-count
         position: absolute
-        bottom: 18px
         right: 12px
+        bottom: 14px
         padding: 0 8px
-        height 24px
+        height: 24px
         line-height: 24px
         border-radius: 14px
         background: rgba(0, 0, 0, 0.2)
@@ -170,14 +166,15 @@
           vertical-align: top
           font-size: 10px
         .icon-keyboard_arrow_right
-          margin-right: 2px
-          font-size: 10px
+          margin-left: 2px
           line-height: 24px
+          font-size: 10px
+
     .bulletin-wrapper
       position: relative
       height: 28px
       line-height: 28px
-      padding: 0 22px 0px 12px
+      padding: 0 22px 0 12px
       white-space: nowrap
       overflow: hidden
       text-overflow: ellipsis
@@ -200,6 +197,7 @@
         font-size: 10px
         right: 12px
         top: 8px
+
     .background
       position: absolute
       top: 0
@@ -216,8 +214,14 @@
       width: 100%
       height: 100%
       overflow: auto
-      background: rgba(7, 17, 27, 0.8)
       backdrop-filter: blur(10px)
+      opacity: 1
+      background: rgba(7, 17, 27, 0.8)
+      &.fade-enter-active, &.fade-leave-active
+        transition: all 0.5s
+      &.fade-enter, &.fade-leave-active
+        opacity: 0
+        background: rgba(7, 17, 27, 0)
       .detail-wrapper
         width: 100%
         min-height: 100%
@@ -246,6 +250,7 @@
               padding: 0 12px
               font-weight: 700
               font-size: 14px
+
           .supports
             width: 80%
             margin: 0 auto
@@ -254,14 +259,14 @@
               margin-bottom: 12px
               font-size: 0
               &:last-child
-                margin-bottom: 0px
+                margin-bottom: 0
               .icon
                 display: inline-block
                 width: 16px
                 height: 16px
                 vertical-align: top
                 margin-right: 6px
-                background-size: 16px
+                background-size: 16px 16px
                 background-repeat: no-repeat
                 &.decrease
                   bg-image('images/decrease_2')
@@ -274,7 +279,7 @@
                 &.special
                   bg-image('images/special_2')
               .text
-                line-height 16px
+                line-height: 16px
                 font-size: 12px
           .bulletin
             width: 80%
@@ -290,11 +295,4 @@
         margin: -64px auto 0 auto
         clear: both
         font-size: 32px
-
-  .fade-enter-active, .fade-leave-active
-    transition: opacity 0.5s
-
-  .fade-enter, .fade-leave-to
-    opacity: 0
-
 </style>
