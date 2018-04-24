@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <v-header :seller="seller"></v-header>
-    <div class="tab">
-      <div class="tab-item border-1px" v-for="(item,index) in tabList" :key="index">
+    <div class="tab border-1px">
+      <div class="tab-item" v-for="(item,index) in tabList" :key="index">
         <router-link tag="a" :to="{path:`${item.path}`}" active-class="active">{{item.name}}</router-link>
       </div>
     </div>

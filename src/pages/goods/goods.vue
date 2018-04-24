@@ -29,7 +29,7 @@
                                                                 class="old">¥{{food.oldPrice}}</span>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food"></cart-control>
+                  <cart-control :food="food" @add="addFood"></cart-control>
                 </div>
               </div>
             </li>
@@ -37,7 +37,8 @@
         </li>
       </ul>
     </div>
-    <shop-cart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
+    <shop-cart ref="shopcart" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"
+               :selectFood="selectFood"></shop-cart>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -63,6 +64,9 @@
       };
     },
     computed: {
+      /**
+       *当前滚动的索引
+       */
       currentIndex() {
         for (let i = 0; i < this.listHeight.length; i++) {
           let height1 = this.listHeight[i];
@@ -72,9 +76,34 @@
           }
         }
         return 0;
+      },
+      /**
+       * 选中的列表
+       */
+      selectFood() {
+        let foods = [];
+        this.goods.map(good => {
+          good.foods.map(food => {
+            if (food.count > 0) {
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
       }
     },
     methods: {
+      _drop(target) {
+        /**
+         * 体验优化,异步执行下落动画
+         */
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target);
+        });
+      },
+      addFood(target) {
+        this._drop(target);
+      },
       /**
        * 点击左侧菜单
        */
@@ -132,7 +161,7 @@
   .goods
     display: flex
     position: absolute
-    top: 170px
+    top: 174px
     bottom: 46px
     width: 100%
     overflow: hidden
