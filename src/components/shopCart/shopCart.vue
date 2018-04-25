@@ -56,7 +56,7 @@
   /**
    * 购物车
    */
-  import cartControl from 'components/cart-control/cart-control.vue';
+  import cartControl from 'components/cartControl/cartControl.vue';
   import BScroll from 'better-scroll';
 
   export default {

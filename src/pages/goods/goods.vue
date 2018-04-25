@@ -43,7 +43,7 @@
 </template>
 <script type="text/ecmascript-6">
   import shopCart from './../../components/shopCart/shopCart.vue';
-  import CartControl from './../../components/cart-control/cart-control.vue';
+  import CartControl from './../../components/cartControl/cartControl.vue';
   import BScroll from 'better-scroll';
 
   export default {
