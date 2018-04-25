@@ -1,49 +1,54 @@
 <template>
-  <div class="shop-cart">
-    <div class="content" @click="toggleList()">
-      <div class="content-left">
-        <div class="logo-wrapper">
-          <div class="logo" :class="{'highlight':totalCount>0}">
-            <i class="icon-shopping_cart"></i>
+  <div>
+    <div class="shop-cart">
+      <div class="content" @click="toggleList()">
+        <div class="content-left">
+          <div class="logo-wrapper">
+            <div class="logo" :class="{'highlight':totalCount>0}">
+              <i class="icon-shopping_cart"></i>
+            </div>
+            <div class="num" v-show="totalCount>0">{{totalCount}}</div>
           </div>
-          <div class="num" v-show="totalCount>0">{{totalCount}}</div>
+          <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
+          <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
         </div>
-        <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
-        <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
+        <div class="content-right" @click.stop.prevent="pay()">
+          <div class="pay" :class="payClass">{{payDesc}}</div>
+        </div>
       </div>
-      <div class="content-right">
-        <div class="pay" :class="payClass">{{payDesc}}</div>
+      <div class="ball-container">
+        <div v-for="ball in balls">
+          <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
+            <div v-show="ball.show" class="ball">
+              <div class="inner inner-hook"></div>
+            </div>
+          </transition>
+        </div>
       </div>
-    </div>
-    <div class="ball-container">
-      <div v-for="ball in balls">
-        <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
-          <div v-show="ball.show" class="ball">
-            <div class="inner inner-hook"></div>
+      <transition name="fold">
+        <div class="shop-cart-list" v-show="listShow">
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="empty">清空</span>
           </div>
-        </transition>
-      </div>
+          <div class="list-content" ref="listContent">
+            <ul>
+              <li class="food border-1px" v-for="food in selectFood">
+                <span class="name">{{food.name}}</span>
+                <div class="price">
+                  <span>￥{{food.price * food.count}}</span>
+                </div>
+                <div class="cartcontrol-wrapper">
+                  <cart-control :food="food" @add="addFood"></cart-control>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </transition>
     </div>
-    <transition name="fold">
-      <div class="shop-cart-list" v-show="listShow">
-        <div class="list-header">
-          <h1 class="title">购物车</h1>
-          <span class="empty">清空</span>
-        </div>
-        <div class="list-content" ref="listContent">
-          <ul>
-            <li class="food border-1px" v-for="food in selectFood">
-              <span class="name">{{food.name}}</span>
-              <div class="price">
-                <span>￥{{food.price * food.count}}</span>
-              </div>
-              <div class="cartcontrol-wrapper">
-                <cart-control :food="food"></cart-control>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+    <transition name="fade">
+      <div class="list-mask" @click="toggleList()" v-show="listShow"></div>
     </transition>
   </div>
 </template>
@@ -150,11 +155,26 @@
       }
     },
     methods: {
+      pay() {
+        if (this.totalPrice < this.minPrice) {
+          return;
+        }
+        alert('1');
+      },
+      /*
+      * 清空购物车
+       */
+      empty() {
+        this.selectFood = [];
+      },
+      addFood(target) {
+        this.drop(target);
+      },
       toggleList() {
         if (this.totalCount === 0) {
           return false;
         }
-        this.listShow = !this.listShow;
+        this.fold = !this.fold;
       },
       beforeDrop(el) {
         let count = this.balls.length;
@@ -363,4 +383,20 @@
             position: absolute
             right: 0
             bottom: 6px
+
+  .list-mask
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: 40
+    backdrop-filter: blur(10px)
+    opacity: 1
+    background: rgba(7, 17, 27, 0.6)
+    &.fade-enter-active, &.fade-leave-active
+      transition: all 0.5s
+    &.fade-enter, &.fade-leave-active
+      opacity: 0
+      background: rgba(7, 17, 27, 0)
 </style>
