@@ -28,6 +28,12 @@
             <p class="text">{{food.info}}</p>
           </div>
         </template>
+        <split></split>
+        <div class="rating">
+          <h1 class="title">商品评价</h1>
+          <rating-select :selectType.sync="selectType" :onlyContent.sync="onlyContent" :desc="desc"
+                         :ratings="food.ratings"></rating-select>
+        </div>
       </div>
     </div>
   </transition>
@@ -39,6 +45,8 @@
   import foodPrice from './../foodPrice/foodPrice.vue';
   import cartControl from './../cartControl/cartControl.vue';
   import split from './../split/split.vue';
+  import ratingSelect from './../ratingSelect/ratingSelect.vue';
+  import {ALL} from './../../data';
 
   import BScroll from 'better-scroll';
 
@@ -51,7 +59,14 @@
     data() {
       return {
         showFlag: false,
-        scroll: null
+        scroll: null,
+        selectType: ALL,
+        onlyContent: true,
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       };
     },
     methods: {
@@ -82,7 +97,8 @@
     components: {
       foodPrice,
       cartControl,
-      split
+      split,
+      ratingSelect
     }
   };
 </script>
@@ -169,4 +185,11 @@
         padding: 0 8px
         font-size: 12px
         color: rgb(77, 85, 93)
+    .rating
+      padding-top: 18px
+      .title
+        line-height: 14px
+        margin-left: 18px
+        font-size: 14px
+        color: rgb(7, 17, 27)
 </style>
