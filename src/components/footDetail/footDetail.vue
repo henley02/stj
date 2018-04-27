@@ -31,8 +31,27 @@
         <split></split>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-          <rating-select :selectType.sync="selectType" :onlyContent.sync="onlyContent" :desc="desc"
-                         :ratings="food.ratings"></rating-select>
+          <rating-select :selectType="selectType" :onlyContent="onlyContent" :desc="desc"
+                         :ratings="food.ratings" @select="selectRating" @toggle="toggleContent"></rating-select>
+          <div class="rating-wrapper">
+            <ul v-show="food.ratings && food.ratings.length>0">
+              <li class="rating-item border-1px" v-for="(rating,index) in food.ratings" :key="index"
+                  v-show="needShow(rating.rateType,rating.text)">
+                <div class="user">
+                  <span class="name">{{rating.username}}</span>
+                  <img class="avatar" width="12" height="12" :src="rating.avatar"/>
+                </div>
+                <div class="time">{{rating.rateTime|date}}</div>
+                <p class="text">
+                  <span
+                    :class="{'icon-thumb_up':rating.rateType===ratingType.POSITIVE,'icon-thumb_down':rating.rateType===ratingType.NEGATIVE}"></span>{{rating.text}}
+                </p>
+              </li>
+            </ul>
+            <div class="no-rating" v-show="food.ratings && food.ratings.length===0">
+              暂无评价
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -46,7 +65,7 @@
   import cartControl from './../cartControl/cartControl.vue';
   import split from './../split/split.vue';
   import ratingSelect from './../ratingSelect/ratingSelect.vue';
-  import {ALL} from './../../data';
+  import {ratingType} from './../../data';
 
   import BScroll from 'better-scroll';
 
@@ -58,9 +77,10 @@
     },
     data() {
       return {
+        ratingType: ratingType,
         showFlag: false,
         scroll: null,
-        selectType: ALL,
+        selectType: ratingType.ALL,
         onlyContent: true,
         desc: {
           all: '全部',
@@ -70,6 +90,18 @@
       };
     },
     methods: {
+      selectRating(type) {
+        this.selectType = type;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      toggleContent() {
+        this.onlyContent = !this.onlyContent;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
       addFood(target) {
         this.$emit('add', target);
       },
@@ -81,6 +113,16 @@
       },
       close() {
         this.$emit('update:visible', false);
+      },
+      needShow(type, text) {
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === ratingType.ALL) {
+          return true;
+        } else {
+          return this.selectType === type;
+        }
       }
     },
     created() {
@@ -92,6 +134,8 @@
         } else {
           this.scroll.refresh();
         }
+        this.selectType = this.ratingType.ALL;
+        this.onlyContent = true;
       });
     },
     components: {
@@ -103,6 +147,7 @@
   };
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../common/stylus/mixin.styl"
   .food
     position: fixed
     top: 0
@@ -192,4 +237,45 @@
         margin-left: 18px
         font-size: 14px
         color: rgb(7, 17, 27)
+      .rating-wrapper
+        padding 0 18px
+        .rating-item
+          position: relative
+          padding: 16px 0
+          border-1px(rgba(7, 17, 27, 0.1))
+          .user
+            position: absolute
+            right: 0
+            top: 16px
+            line-height: 12px
+            font-size: 0
+            .name
+              display: inline-block
+              margin-right: 6px
+              vertical-align: top
+              font-size: 10px
+              color: rgb(147, 153, 159)
+            .avatar
+              border-radius: 50%
+          .time
+            margin-bottom: 6px
+            line-height: 12px
+            font-size: 10px
+            color: rgb(147, 153, 159)
+          .text
+            line-height: 16px
+            font-size: 12px
+            color: rgb(7, 17, 27)
+            .icon-thumb_up, .icon-thumb_down
+              margin-right: 4px
+              line-height: 16px
+              font-size: 12px
+            .icon-thumb_up
+              color: rgb(0, 160, 220)
+            .icon-thumb_down
+              color: rgb(147, 153, 159)
+        .no-rating
+          padding: 16px 0
+          font-size: 12px
+          color: rgb(147, 153, 159)
 </style>

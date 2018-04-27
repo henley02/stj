@@ -1,6 +1,3 @@
-/*
-* 评论的类型
- */
 /**
  * 满意
  * @type {number}
@@ -16,3 +13,12 @@ export const NEGATIVE = 1;
  * @type {number}
  */
 export const ALL = 2;
+
+/*
+* 评论的类型
+ */
+export const ratingType = {
+  POSITIVE: POSITIVE,
+  NEGATIVE: NEGATIVE,
+  ALL: ALL
+};

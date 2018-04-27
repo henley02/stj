@@ -1,12 +1,12 @@
 <template>
   <div class="rating-select">
     <div class="rating-type border-1px">
-      <span class="block positive" :class="{'active':selectType===ALL}" @click="select(ALL)">{{desc.all}}<span
-        class="count">{{ratings.length}}</span></span>
-      <span class="block positive" :class="{'active':selectType===POSITIVE}" @click="select(POSITIVE)">{{desc.positive}}<span
-        class="count">{{positive.length}}</span></span>
-      <span class="block negative" :class="{'active':selectType===NEGATIVE}" @click="select(NEGATIVE)">{{desc.negative}}<span
-        class="count">{{negative.length}}</span></span>
+      <span class="block positive" :class="{'active':selectType===ratingType.ALL}"
+            @click="select(ratingType.ALL)">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
+      <span class="block positive" :class="{'active':selectType===ratingType.POSITIVE}"
+            @click="select(ratingType.POSITIVE)">{{desc.positive}}<span class="count">{{positive.length}}</span></span>
+      <span class="block negative" :class="{'active':selectType===ratingType.NEGATIVE}"
+            @click="select(ratingType.NEGATIVE)">{{desc.negative}}<span class="count">{{negative.length}}</span></span>
     </div>
     <div class="switch" :class="{'on':onlyContent}" @click="toggleContent()">
       <span class="icon-check_circle"></span>
@@ -15,7 +15,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import {ALL, POSITIVE, NEGATIVE} from './../../data';
+  import {ratingType} from './../../data';
 
   export default {
     name: 'ratingSelect',
@@ -28,7 +28,7 @@
       },
       selectType: {
         type: Number,
-        default: ALL
+        default: ratingType.ALL
       },
       onlyContent: {
         type: Boolean,
@@ -47,31 +47,24 @@
     },
     data() {
       return {
-        ALL: ALL,
-        POSITIVE: POSITIVE,
-        NEGATIVE: NEGATIVE
+        ratingType: ratingType
       };
     },
     computed: {
       positive() {
-        return this.ratings.filter((rating) => rating.rateType === POSITIVE);
+        return this.ratings.filter((rating) => rating.rateType === ratingType.POSITIVE);
       },
       negative() {
-        return this.ratings.filter((rating) => rating.rateType === NEGATIVE);
+        return this.ratings.filter((rating) => rating.rateType === ratingType.NEGATIVE);
       }
     },
     methods: {
       select(type) {
-        this.$emit('update:selectType', type);
+        this.$emit('select', type);
       },
       toggleContent() {
-        let onlyContent = !this.onlyContent;
-        this.$emit('update:onlyContent', onlyContent);
+        this.$emit('toggle');
       }
-    },
-    created() {
-    },
-    mounted() {
     }
   };
 </script>
