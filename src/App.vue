@@ -6,7 +6,9 @@
         <router-link tag="a" :to="{path:`${item.path}`}" active-class="active">{{item.name}}</router-link>
       </div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
